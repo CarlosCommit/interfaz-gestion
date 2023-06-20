@@ -16,7 +16,7 @@ public class Conexion {
 
     public String  post(String urlAPI, String datos)throws Exception {
 
-    	       URL url = new URL("http://localhost:8080/"); 
+    	       URL url = new URL("http://localhost:8080/xuxuy"); 
     	      
     	      HttpURLConnection conexión = (HttpURLConnection) url.openConnection();
     	      

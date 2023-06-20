@@ -10,34 +10,50 @@ package vistas;
  * @author coronel
  */
 import conexion.Conexion;
+import model.Producto;
+import model.Proforma;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class RegistrarVenta extends javax.swing.JFrame {
-
+  	private Producto producto ;
+	Proforma proforma;
     /**
      * Creates new form RegistrarVenta
      */
     public RegistrarVenta() {
     	
+    	proforma = new Proforma();
     	final Conexion conexion = new Conexion(); 
+    
+  
+    
     	
         initComponents();
         //Agregar Producto a la factura
         agregar.addActionListener(new ActionListener() {
+        	        	
+        	DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         	
             public void actionPerformed(ActionEvent e) {
-                
+
             	try {
-            	String respuesta = conexion.get("http://localhost:8080/catalogo");
-            	 System.out.println(respuesta);
-            	 
-            	 
-            	 
+            
+            	proforma.getProductos().add(producto);
+            	Object[] rowData = {producto.getId(),producto.getNombre(),  producto.getCantidad(),producto.getPrecio(), producto.getPrecio()*producto.getCantidad()};
+            	tableModel.addRow(rowData);
+            	limpiarValores(); 
+            	System.out.println(proforma);
+            	
             	}catch(Exception error)
             	{
             		 System.out.println("¡error'!");
@@ -54,28 +70,74 @@ public class RegistrarVenta extends javax.swing.JFrame {
                 
             	try {
             		
-            	String respuesta = conexion.get("http://localhost:8080/productos/nombre/"+jTextField1.getText());
-              System.out.println(respuesta);
+               String respuesta = conexion.get("http://localhost:8080/productos/nombre/"+jTextField1.getText());
+               System.out.println(respuesta);
                ObjectMapper objectMapper = new ObjectMapper();
-           JsonNode jsonNode = objectMapper.readTree(respuesta);
-          	 
-          	String nombre = jsonNode.get("Producto Buscado:").get("nombre").asText();
-          	 double precio = jsonNode.get("Producto Buscado:").get("precio").asDouble();
-           int stock = jsonNode.get("Producto Buscado:").get("stock").asInt();
-           
-        	jTextField4.setText(nombre);
-        	jTextField5.setText(""+stock);
-            jTextField2.setText(""+precio);
+               JsonNode jsonNode = objectMapper.readTree(respuesta); 
+                producto = objectMapper.readValue(jsonNode.get("Producto Buscado:").toString(), Producto.class);
+               System.out.println(producto);
+           	  // String nombre = jsonNode.get("Producto Buscado:").get("nombre").asText();
+          	  // double precio = jsonNode.get("Producto Buscado:").get("precio").asDouble();
+              // int stock = jsonNode.get("Producto Buscado:").get("stock").asInt();
+               jTextField4.setText(producto.getNombre());
+               jTextField5.setText(""+producto.getStock());
+               jTextField2.setText(""+producto.getPrecio());
+               
             	}catch(Exception error)
             	{
-            		 System.out.println("¡error'!");
+            		 System.out.println(error.getMessage());
             	}
                
                 
             }
         });
+          
+          //obtener valor
+          
+          jSpinner1.addChangeListener(new ChangeListener() {
+			
+			public void stateChanged(ChangeEvent e) {
+			
+				int nuevo =( (Number) jSpinner1.getValue()).intValue(); 
+				producto.setCantidad(nuevo);
+				
+				System.out.println(producto);
+			}
+		});
+          
+          
+          //generar factura
+          
+          generarF.addActionListener(new ActionListener() {
+          	
+              public void actionPerformed(ActionEvent e) {
+                  
+              	try {
+              		ObjectMapper objectMapper = new ObjectMapper();
+
+                 String respuesta = conexion.post("url", objectMapper.writeValueAsString(proforma) );
+              	}catch(Exception error)
+              	{
+              		 System.out.println(error.getMessage());
+              	}
+                 
+                  
+              }
+          });
+       
         
     }
+    
+    public void limpiarValores()
+    {
+    	 jTextField1.setText("");
+    	 jTextField4.setText("");
+         jTextField5.setText("");
+         jTextField2.setText("");
+         jSpinner1.setValue(0);
+    	producto = new Producto();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -85,7 +147,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+       
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
