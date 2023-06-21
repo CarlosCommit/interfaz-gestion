@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RegistrarVenta extends javax.swing.JFrame {
   	private Producto producto ;
 	Proforma proforma;
+	private double total; 
     /**
      * Creates new form RegistrarVenta
      */
@@ -34,7 +35,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
     	
     	proforma = new Proforma();
     	final Conexion conexion = new Conexion(); 
-    
+        total=0; 
   
     
     	
@@ -51,8 +52,14 @@ public class RegistrarVenta extends javax.swing.JFrame {
             	proforma.getProductos().add(producto);
             	Object[] rowData = {producto.getId(),producto.getNombre(),  producto.getCantidad(),producto.getPrecio(), producto.getPrecio()*producto.getCantidad()};
             	tableModel.addRow(rowData);
-            	limpiarValores(); 
+            	
+           
             	System.out.println(proforma);
+            	
+            	 total = total +  (producto.getPrecio() * producto.getCantidad() ) ;
+            	
+            	jTextField3.setText(""+total);
+             	limpiarValores(); 
             	
             	}catch(Exception error)
             	{
@@ -116,6 +123,7 @@ public class RegistrarVenta extends javax.swing.JFrame {
               		ObjectMapper objectMapper = new ObjectMapper();
 
                  String respuesta = conexion.post("url", objectMapper.writeValueAsString(proforma) );
+              	 System.out.println("Proforma enviada y guardada: " + objectMapper.writeValueAsString(proforma));
               	}catch(Exception error)
               	{
               		 System.out.println(error.getMessage());
@@ -130,12 +138,13 @@ public class RegistrarVenta extends javax.swing.JFrame {
     
     public void limpiarValores()
     {
+    	 producto = new Producto();
     	 jTextField1.setText("");
     	 jTextField4.setText("");
          jTextField5.setText("");
          jTextField2.setText("");
          jSpinner1.setValue(0);
-    	producto = new Producto();
+    	
     }
     
 
