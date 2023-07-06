@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package vistas;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  *
@@ -30,6 +32,10 @@ public class Menu extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jButton2.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	}
+        });
         jButton4 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -41,7 +47,7 @@ public class Menu extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setText("XUXUY");
 
-        jButton2.setText("BUSCAR PRODUCTO");
+        jButton2.setText("REALIZAR VENTA");
 
         jButton4.setText("GENERAR FACTURA");
 
